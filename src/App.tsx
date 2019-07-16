@@ -5,12 +5,13 @@ import { Home } from './pages/Home';
 import { Profile } from './pages/Profile';
 import { About } from './pages/About';
 import { Menu } from './components/Menu';
+import { Product } from './pages/Product';
+import { Subproduct } from './pages/Subproduct';
 
 const App: React.FC = () => {
   return (
     <BrowserRouter>
       <div className="App">
-
         <Menu />
 
         <div className="App-content">
@@ -19,12 +20,16 @@ const App: React.FC = () => {
             <Route path="/profile" exact={true} component={Profile} />
             <Route path="/about" exact={true} component={About} />
 
+            <Route path="/product/:productId" exact={true} component={Product} />
+
+            <Route path="/subproduct/:subproductId" exact={true} component={Subproduct} />
+
             <Redirect to="/home" />
           </Switch>
         </div>
       </div>
     </BrowserRouter>
   );
-}
+};
 
 export default App;
