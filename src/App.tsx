@@ -7,6 +7,7 @@ import { About } from './pages/About';
 import { Menu } from './components/Menu';
 import { Product } from './pages/Product';
 import { Subproduct } from './pages/Subproduct';
+import { ChangePassword } from './pages/ChangePassword';
 
 const App: React.FC = () => {
   return (
@@ -21,8 +22,9 @@ const App: React.FC = () => {
             <Route path="/about" exact={true} component={About} />
 
             <Route path="/product/:productId" exact={true} component={Product} />
-
             <Route path="/subproduct/:subproductId" exact={true} component={Subproduct} />
+
+            <Route path="/change-password" exact={true} component={ChangePassword} />
 
             <Redirect to="/home" />
           </Switch>
