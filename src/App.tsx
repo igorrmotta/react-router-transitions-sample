@@ -2,14 +2,13 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { Menu } from './components/Menu';
-import { routes } from './routes';
-import { RouterComponent } from './Router';
-// import { Home } from './pages/Home';
-// import { Profile } from './pages/Profile';
-// import { About } from './pages/About';
-// import { Product } from './pages/Product';
-// import { Subproduct } from './pages/Subproduct';
-// import { ChangePassword } from './pages/ChangePassword';
+import { SwitchWithSlide } from './SlideSwitch/SlideSwitch';
+import { Home } from './pages/Home';
+import { Product } from './pages/Product';
+import { Subproduct } from './pages/Subproduct';
+import { Profile } from './pages/Profile';
+import { ChangePassword } from './pages/ChangePassword';
+import { About } from './pages/About';
 
 const App: React.FC = () => {
   return (
@@ -18,19 +17,16 @@ const App: React.FC = () => {
         <Menu />
 
         <div className="App-content">
-          <RouterComponent routes={routes} />
-          {/* <Switch>
-            <Route path="/home" exact={true} component={Home} />
-            <Route path="/profile" exact={true} component={Profile} />
-            <Route path="/about" exact={true} component={About} />
+          <SwitchWithSlide>
+            <Route exact={true} component={Home} path={'/home'} />
+            <Route exact={true} component={Product} path={'/product/:productId'} />
+            <Route exact={true} component={Subproduct} path={'/subproduct/:subproductId'} />
 
-            <Route path="/product/:productId" exact={true} component={Product} />
-            <Route path="/subproduct/:subproductId" exact={true} component={Subproduct} />
+            <Route exact={true} component={Profile} path={'/profile'} />
+            <Route exact={true} component={ChangePassword} path={'/change-password'} />
 
-            <Route path="/change-password" exact={true} component={ChangePassword} />
-
-            <Redirect to="/home" />
-          </Switch> */}
+            <Route exact={true} component={About} path={'/about'} />
+          </SwitchWithSlide>
         </div>
       </div>
     </BrowserRouter>
