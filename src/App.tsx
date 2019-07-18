@@ -1,13 +1,15 @@
 import React from 'react';
 import './App.css';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
-import { Home } from './pages/Home';
-import { Profile } from './pages/Profile';
-import { About } from './pages/About';
 import { Menu } from './components/Menu';
-import { Product } from './pages/Product';
-import { Subproduct } from './pages/Subproduct';
-import { ChangePassword } from './pages/ChangePassword';
+import { routes } from './routes';
+import { RouterComponent } from './Router';
+// import { Home } from './pages/Home';
+// import { Profile } from './pages/Profile';
+// import { About } from './pages/About';
+// import { Product } from './pages/Product';
+// import { Subproduct } from './pages/Subproduct';
+// import { ChangePassword } from './pages/ChangePassword';
 
 const App: React.FC = () => {
   return (
@@ -16,7 +18,8 @@ const App: React.FC = () => {
         <Menu />
 
         <div className="App-content">
-          <Switch>
+          <RouterComponent routes={routes} />
+          {/* <Switch>
             <Route path="/home" exact={true} component={Home} />
             <Route path="/profile" exact={true} component={Profile} />
             <Route path="/about" exact={true} component={About} />
@@ -27,7 +30,7 @@ const App: React.FC = () => {
             <Route path="/change-password" exact={true} component={ChangePassword} />
 
             <Redirect to="/home" />
-          </Switch>
+          </Switch> */}
         </div>
       </div>
     </BrowserRouter>
