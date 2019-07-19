@@ -16,7 +16,6 @@ type State = {
 };
 
 class Slider extends React.Component<Props, State> {
-  _animationCallback: Props['animationCallback'];
   _postPrepareTimeout: NodeJS.Timeout | null;
   node: HTMLDivElement | null;
 
@@ -29,7 +28,6 @@ class Slider extends React.Component<Props, State> {
       animatePrepare: false
     };
 
-    this._animationCallback = null;
     this._postPrepareTimeout = null;
     this.node = null;
 
@@ -39,7 +37,7 @@ class Slider extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.startAnimation(this.props.position, null);
+    this.startAnimation(this.props.position);
     if (this.node) {
       this.node.addEventListener('transitionend', this.onTransitionEnd);
     }
@@ -53,25 +51,24 @@ class Slider extends React.Component<Props, State> {
 
   componentWillReceiveProps(newProps: Props) {
     if (newProps.position !== this.props.position) {
-      this.startAnimation(newProps.position, newProps.animationCallback);
+      this.startAnimation(newProps.position);
     }
   }
 
-  startAnimation(position: SlideFromType, animationCallback: Props['animationCallback']) {
+  startAnimation(position: SlideFromType) {
     const noAnimate = position === 'CENTER';
     const animatingOut = ['TO_LEFT', 'TO_RIGHT'].includes(position);
     const currentlyIn = ['CENTER', 'FROM_LEFT', 'FROM_RIGHT'].includes(this.state.position);
+
     if (noAnimate || (currentlyIn && animatingOut)) {
       // in these cases we don't need to prepare our animation at all, we can just
       // run straight into it
-      this._animationCallback = animationCallback;
       return this.setState({
         animatePrepare: false,
         position
       });
     }
 
-    this._animationCallback = this.postPrepareAnimation;
     // in case the transition fails, we also post-prepare after some ms (whichever
     // runs first should cancel the other)
     this._postPrepareTimeout = setTimeout(this.postPrepareAnimation, 500);
@@ -87,26 +84,24 @@ class Slider extends React.Component<Props, State> {
     if (this._postPrepareTimeout) {
       clearTimeout(this._postPrepareTimeout);
     }
-    this._animationCallback = null;
 
-    this.setState(
-      { animatePrepare: false },
-      () => (this._animationCallback = this.props.animationCallback)
-    );
+    this.setState({ animatePrepare: false });
   }
 
   onTransitionEnd(e: TransitionEvent) {
     // the Slider transitions the `transform` property. Any other transitions
     // that occur on the element we can just ignore.
-    if (e.propertyName !== 'transform') return;
-
-    const callback = this._animationCallback;
-    delete this._animationCallback;
+    if (e.propertyName !== 'transform') {
+      return;
+    }
 
     // an animation callback is another animation, so we only set `animating` to
     // `false` when we finish the follow-up animation
-    if (callback) setTimeout(callback, 0);
-    else this.setState({ animating: false });
+    if (this.props.animationCallback) {
+      setTimeout(this.props.animationCallback, 0);
+    } else {
+      this.setState({ animating: false });
+    }
   }
 
   render() {
@@ -121,7 +116,7 @@ class Slider extends React.Component<Props, State> {
           prepare: this.state.animatePrepare
         })}
       >
-        <div className={this.props.className}>{this.props.children}</div>
+        {this.props.children}
       </div>
     );
   }

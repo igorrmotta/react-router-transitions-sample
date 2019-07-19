@@ -1,94 +1,115 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, SwitchProps } from 'react-router-dom';
 import { Slider, SlideFromType } from './Slider';
+import { History } from 'history';
 
 type ChildrenType = React.ReactElement<any, string>;
 
-type Props = {
+type SlideOutProps = {
   children: ChildrenType;
   uniqKey: string;
+  history: History;
 };
 type State = {
-  childPosition: SlideFromType;
-
+  currChildPosition: SlideFromType;
   curChild: ChildrenType;
   curUniqId: string;
+
+  prevChildPosition: SlideFromType;
   prevChild: ChildrenType | null;
   prevUniqId: string | null;
-
-  animationCallback: (() => void) | null;
 };
 
-class SlideOut extends React.Component<Props, State> {
-  constructor(props: Props) {
+class SlideOut extends React.Component<SlideOutProps, State> {
+  constructor(props: SlideOutProps) {
     super(props);
-    console.log('constructor');
 
     this.state = {
-      childPosition: 'CENTER',
+      currChildPosition: 'CENTER',
       curChild: props.children,
       curUniqId: props.uniqKey,
+
+      prevChildPosition: 'CENTER',
       prevChild: null,
-      prevUniqId: null,
-      animationCallback: null
+      prevUniqId: null
     };
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(prevProps: SlideOutProps, prevState: State) {
     const prevUniqId = prevProps.uniqKey || prevProps.children.type;
     const uniqId = this.props.uniqKey || this.props.children.type;
 
     if (prevUniqId !== uniqId) {
-      console.log(
-        '(componentDidUpdate)',
-        'Uniq ID has changed!',
-        `It was ${prevUniqId}, but is now ${uniqId}`,
-        'Begin sliding TO_LEFT, but set `prevChild` so we keep rendering the old page!'
-      );
+      const isBack = this.props.history.action === 'POP';
+      if (isBack) {
+        this.setState({
+          currChildPosition: 'TO_RIGHT',
+          curChild: prevProps.children,
+          curUniqId: prevUniqId,
 
-      this.setState({
-        // childPosition: 'TO_LEFT',
-        curChild: this.props.children,
-        curUniqId: uniqId,
-        prevChild: prevProps.children,
-        prevUniqId,
-        animationCallback: this.swapChildren
-      });
+          prevChildPosition: 'CENTER',
+          prevChild: this.props.children,
+          prevUniqId: uniqId
+        });
+      } else {
+        this.setState({
+          currChildPosition: 'FROM_RIGHT',
+          curChild: this.props.children,
+          curUniqId: uniqId,
+
+          prevChildPosition: 'CENTER',
+          prevChild: prevProps.children,
+          prevUniqId
+        });
+      }
     }
   }
 
-  swapChildren = () => {
-    console.log(
-      '(swapChildren)',
-      'TO_LEFT animation has completed!',
-      'Remove `prevChild` so our new child is rendered',
-      'Start animating FROM_RIGHT'
-    );
-
+  prevChildAnimationCallback = () => {
     this.setState({
-      childPosition: 'FROM_RIGHT',
       prevChild: null,
       prevUniqId: null,
-      animationCallback: () => {
-        console.log('All done!');
-        this.setState({ animationCallback: null });
-      }
+      prevChildPosition: 'CENTER'
     });
+  };
+
+  currChildAnimationCallback = () => {
+    const isBack = this.props.history.action === 'POP';
+    if (!isBack) {
+      this.setState({
+        currChildPosition: 'CENTER'
+      });
+    }
   };
 
   render() {
     return (
-      <Slider position={this.state.childPosition} animationCallback={this.state.animationCallback}>
-        {this.state.prevChild || this.state.curChild}
-      </Slider>
+      <div className="slide-container">
+        <Slider
+          position={this.state.prevChildPosition}
+          animationCallback={this.prevChildAnimationCallback}
+        >
+          {this.state.prevChild}
+        </Slider>
+
+        <Slider
+          position={this.state.currChildPosition}
+          animationCallback={this.currChildAnimationCallback}
+        >
+          {this.state.curChild}
+        </Slider>
+      </div>
     );
   }
 }
 
-const animateSwitch = (CustomSwitch: any, AnimatorComponent: any) => (props: { children: any }) => (
+const animateSwitch = (
+  CustomSwitch: React.ComponentType<SwitchProps>,
+  AnimatorComponent: React.ComponentType<SlideOutProps>
+) => (props: { children: any }) => (
   <Route
-    render={({ location }) => (
-      <AnimatorComponent uniqKey={location.pathname}>
+    render={({ location, history }) => (
+      <AnimatorComponent uniqKey={location.pathname} history={history}>
         <CustomSwitch location={location}>{props.children}</CustomSwitch>
       </AnimatorComponent>
     )}

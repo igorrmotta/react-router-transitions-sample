@@ -1,10 +1,14 @@
 import React from 'react';
-import './App.css';
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import { Menu } from './components/Menu';
-import PageTransition from 'react-router-page-transition';
 import { Home } from './pages/Home';
 import { Profile } from './pages/Profile';
+import { SwitchWithSlide } from './SlideSwitch/SlideSwitch';
+import { About } from './pages/About';
+import { Product } from './pages/Product';
+import { Subproduct } from './pages/Subproduct';
+import { ChangePassword } from './pages/ChangePassword';
+import './App.css';
 
 const App: React.FC = () => {
   return (
@@ -13,18 +17,16 @@ const App: React.FC = () => {
         <Menu />
 
         <div className="App-content">
-          <Route
-            render={({ location }) => (
-              <PageTransition>
-                <div className="transition-item">
-                  <Switch location={location}>
-                    <Route exact path="/home" component={Home} />
-                    <Route path="/profile" component={Profile} />
-                  </Switch>
-                </div>
-              </PageTransition>
-            )}
-          />
+          <SwitchWithSlide>
+            <Route path="/home" exact={true} component={Home} />
+            <Route path="/product/:productId" exact={true} component={Product} />
+            <Route path="/subproduct/:subproductId" exact={true} component={Subproduct} />
+
+            <Route path="/profile" exact={true} component={Profile} />
+            <Route path="/change-password" exact={true} component={ChangePassword} />
+
+            <Route path="/about" exact={true} component={About} />
+          </SwitchWithSlide>
         </div>
       </div>
     </BrowserRouter>
