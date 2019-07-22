@@ -17,6 +17,7 @@ type State = {
 
 class Slider extends React.Component<Props, State> {
   _postPrepareTimeout: NodeJS.Timeout | null;
+  _animationTimeout: NodeJS.Timeout | null;
   node: HTMLDivElement | null;
 
   constructor(props: Props) {
@@ -29,6 +30,7 @@ class Slider extends React.Component<Props, State> {
     };
 
     this._postPrepareTimeout = null;
+    this._animationTimeout = null;
     this.node = null;
 
     this.startAnimation = this.startAnimation.bind(this);
@@ -46,6 +48,14 @@ class Slider extends React.Component<Props, State> {
   componentWillUnmount() {
     if (this.node) {
       this.node.removeEventListener('transitionend', this.onTransitionEnd);
+    }
+
+    if (this._postPrepareTimeout) {
+      clearTimeout(this._postPrepareTimeout);
+    }
+
+    if (this._animationTimeout) {
+      clearTimeout(this._animationTimeout);
     }
   }
 
@@ -98,7 +108,7 @@ class Slider extends React.Component<Props, State> {
     // an animation callback is another animation, so we only set `animating` to
     // `false` when we finish the follow-up animation
     if (this.props.animationCallback) {
-      setTimeout(this.props.animationCallback, 0);
+      this._animationTimeout = setTimeout(this.props.animationCallback, 0);
     } else {
       this.setState({ animating: false });
     }
