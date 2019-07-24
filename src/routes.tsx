@@ -1,4 +1,4 @@
-import { RouteComponentProps, RouteProps } from 'react-router';
+import { RouteComponentProps, RouteProps, Route } from 'react-router';
 import { Home } from './pages/Home';
 import { Profile } from './pages/Profile';
 import { About } from './pages/About';
@@ -15,7 +15,7 @@ export type RouteType = {
   fadeChildren?: RouteType[];
 };
 
-export const routes: RouteType[] = [
+export const dataRoutes: RouteType[] = [
   {
     path: '/home',
     component: Home,

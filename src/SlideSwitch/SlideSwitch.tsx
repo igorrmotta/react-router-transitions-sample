@@ -3,6 +3,7 @@ import { Switch, Route, SwitchProps } from 'react-router-dom';
 import { History } from 'history';
 import { SlideAnimator } from './SlideAnimator';
 import { FadeAnimator } from './FadeAnimator';
+import { TransitionType } from './utils';
 
 export type AnimatorChildrenType = React.ReactElement<any, string>;
 
@@ -13,19 +14,25 @@ export type AnimatorProps = {
 };
 
 const animateSwitch = (
-  CustomSwitch: React.ComponentType<SwitchProps>,
-  AnimatorComponent: React.ComponentType<AnimatorProps>
-) => (props: { children: any }) => (
-  <Route
-    render={({ location, history }) => (
-      <AnimatorComponent uniqKey={location.pathname} history={history}>
-        <CustomSwitch location={location}>{props.children}</CustomSwitch>
-      </AnimatorComponent>
-    )}
-  />
-);
+  CustomSwitch: React.ComponentType<SwitchProps & { transitionName: string }>,
+  AnimatorComponent: React.ComponentType<AnimatorProps>,
+  transitionName: TransitionType
+) => (props: { children: any }) => {
+  return (
+    <Route
+      render={({ location, history }) => (
+        <AnimatorComponent uniqKey={location.pathname} history={history}>
+          <CustomSwitch transitionName={transitionName} location={location}>
+            {props.children}
+          </CustomSwitch>
+        </AnimatorComponent>
+      )}
+    />
+  );
+};
 
-const SwitchWithSlide = animateSwitch(Switch, SlideAnimator);
-const SwitchWithFade = animateSwitch(Switch, FadeAnimator);
+// TODO: redeclare typeos of Switch props to include TransitionName there
+const SwitchWithSlide = animateSwitch(Switch as any, SlideAnimator, 'slide');
+const SwitchWithFade = animateSwitch(Switch as any, FadeAnimator, 'fade');
 
 export { SwitchWithSlide, SwitchWithFade };
