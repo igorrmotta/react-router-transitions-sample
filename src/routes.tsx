@@ -12,7 +12,6 @@ export type RouteType = {
   component: RouteProps['component'];
   exact?: boolean;
   transition: TransitionType;
-  children?: RouteType[];
 };
 
 export const dataRoutes: RouteType[] = [
@@ -20,37 +19,31 @@ export const dataRoutes: RouteType[] = [
     path: '/home',
     component: Home,
     exact: true,
-    transition: 'fade',
-    children: [
-      {
-        path: '/product/:productId',
-        component: Product,
-        exact: true,
-        transition: 'slide',
-        children: [
-          {
-            transition: 'slide',
-            path: '/subproduct/:subproductId',
-            component: Subproduct,
-            exact: true
-          }
-        ]
-      }
-    ]
+    transition: 'fade'
+  },
+  {
+    path: '/product/:productId',
+    component: Product,
+    exact: true,
+    transition: 'slide'
+  },
+  {
+    transition: 'slide',
+    path: '/subproduct/:subproductId',
+    component: Subproduct,
+    exact: true
   },
   {
     path: '/profile',
     component: Profile,
     transition: 'fade',
-    children: [
-      {
-        path: '/change-password',
-        component: ChangePassword,
-        exact: true,
-        transition: 'zoom'
-      }
-    ],
     exact: true
+  },
+  {
+    path: '/change-password',
+    component: ChangePassword,
+    exact: true,
+    transition: 'zoom'
   },
   {
     path: '/about',

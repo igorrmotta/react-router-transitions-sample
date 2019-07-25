@@ -1,22 +1,16 @@
 // Based on: https://github.com/maisano/react-router-transition.git
 
 import * as React from 'react';
-import {
-  TransitionMotion,
-  Style,
-  TransitionPlainStyle,
-  PlainStyle,
-  TransitionStyle
-} from 'react-motion';
+import { TransitionMotion, Style, TransitionPlainStyle, TransitionStyle } from 'react-motion';
 import ensureSpring from './ensureSpring';
 
 const identity = (val: any) => val;
 
 export type RouteTransitionProps = {
   children: React.ReactElement | React.ReactElement[] | React.ReactElement[][];
-  atEnter: PlainStyle;
-  atActive: PlainStyle;
-  atLeave: PlainStyle;
+  atEnter: any; // PlainStyle | OpaqueConfig;
+  atActive: any; // PlainStyle | OpaqueConfig;
+  atLeave: any; // PlainStyle | OpaqueConfig;
   runOnMount?: boolean;
   mapStyles?: (styles: Style) => any;
   wrapperComponent?: keyof React.ReactHTML | string | boolean;

@@ -1,7 +1,7 @@
 // Based on: https://github.com/maisano/react-router-transition.git
 
 import * as React from 'react';
-import { Route, Switch, matchPath, match, RouteComponentProps } from 'react-router-dom';
+import { Route, Switch, matchPath, match } from 'react-router-dom';
 import { Location } from 'history';
 import RouteTransition, { RouteTransitionProps } from './RouteTransition';
 
