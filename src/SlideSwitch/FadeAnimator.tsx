@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { AnimatorProps, AnimatorChildrenType } from './SlideSwitch';
 import Fade from './Fade';
-import { shouldAnimate } from './utils';
 
 type Step = (...args: any[]) => StateItem;
 const steps: Array<Step> = [
@@ -34,6 +33,7 @@ type State = { uniqId: string } & StateItem;
 class FadeAnimator extends React.Component<AnimatorProps, State> {
   constructor(props: AnimatorProps) {
     super(props);
+    console.warn('FadeAnimator.constructor');
 
     this.state = {
       uniqId: props.uniqKey,
@@ -43,15 +43,9 @@ class FadeAnimator extends React.Component<AnimatorProps, State> {
   }
 
   componentWillReceiveProps(nextProps: AnimatorProps) {
+    console.warn('FadeAnimator.componentWillReceiveProps');
     const uniqId = this.props.uniqKey || this.props.children.type;
     const nextUniqId = nextProps.uniqKey || nextProps.children.type;
-
-    if (!shouldAnimate('fade', nextUniqId, nextProps.children)) {
-      return;
-    }
-
-    console.log('this.props', this.props);
-    console.log('nextProps >>> ', nextProps);
 
     if (uniqId !== nextUniqId) {
       this.setState({
@@ -63,18 +57,27 @@ class FadeAnimator extends React.Component<AnimatorProps, State> {
   }
 
   onNextEntered = () => {
+    console.warn('FadeAnimator.onNextEntered');
     if (!this.state.nextChild) {
       return;
     }
 
-    this.setState({
-      ...steps[0](this.state.nextChild, this.state)
-    });
+    this.setState(
+      {
+        ...steps[0](this.state.nextChild, this.state)
+      },
+      () => {
+        if (this.props.onDone) {
+          this.props.onDone();
+        }
+      }
+    );
   };
 
   render() {
+    console.warn('FadeAnimator.render');
     return (
-      <div className="animator-container">
+      <>
         <Fade in={this.state.curFadeIn} delay={'0.5s'} timeout={500} data-id="current">
           <div>{this.state.curChild}</div>
         </Fade>
@@ -82,7 +85,7 @@ class FadeAnimator extends React.Component<AnimatorProps, State> {
         <Fade in={this.state.nextFadeIn} onEntered={this.onNextEntered} data-id="next">
           <div>{this.state.nextChild}</div>
         </Fade>
-      </div>
+      </>
     );
   }
 }

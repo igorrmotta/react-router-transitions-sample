@@ -16,10 +16,12 @@ class SlideAnimator extends React.Component<AnimatorProps, State> {
   constructor(props: AnimatorProps) {
     super(props);
 
+    const isBack = this.props.history.action === 'POP';
+    console.warn('SlideAnimator.constructor', isBack);
     this.state = {
       uniqId: props.uniqKey,
 
-      currChildPosition: 'CENTER',
+      currChildPosition: isBack ? 'TO_RIGHT' : 'FROM_RIGHT',
       curChild: props.children,
 
       prevChildPosition: 'CENTER',
@@ -30,6 +32,12 @@ class SlideAnimator extends React.Component<AnimatorProps, State> {
   componentDidUpdate(prevProps: AnimatorProps, prevState: State) {
     const prevUniqId = prevProps.uniqKey || prevProps.children.type;
     const uniqId = this.props.uniqKey || this.props.children.type;
+
+    console.warn('SlideAnimator.componentDidUpdate >>> prevProps', prevProps);
+    console.warn('SlideAnimator.componentDidUpdate >>> this.props', this.props);
+
+    console.warn('SlideAnimator.componentDidUpdate >>> prevState', prevState);
+    console.warn('SlideAnimator.componentDidUpdate >>> this.state', this.state);
 
     if (prevUniqId !== uniqId) {
       const isBack = this.props.history.action === 'POP';
@@ -58,24 +66,41 @@ class SlideAnimator extends React.Component<AnimatorProps, State> {
   }
 
   prevChildAnimationCallback = () => {
-    this.setState({
-      prevChild: null,
-      prevChildPosition: 'CENTER'
-    });
+    console.warn('SlideAnimator.prevChildAnimationCallback');
+    this.setState(
+      {
+        prevChild: null,
+        prevChildPosition: 'CENTER'
+      },
+      () => {
+        if (this.props.onDone) {
+          this.props.onDone();
+        }
+      }
+    );
   };
 
   currChildAnimationCallback = () => {
+    console.warn('SlideAnimator.currChildAnimationCallback');
     const isBack = this.props.history.action === 'POP';
     if (!isBack) {
-      this.setState({
-        currChildPosition: 'CENTER'
-      });
+      this.setState(
+        {
+          currChildPosition: 'CENTER'
+        },
+        () => {
+          if (this.props.onDone) {
+            this.props.onDone();
+          }
+        }
+      );
     }
   };
 
   render() {
+    console.warn('SlideAnimator.render');
     return (
-      <div className="animator-container">
+      <>
         <Slider
           position={this.state.prevChildPosition}
           animationCallback={this.prevChildAnimationCallback}
@@ -89,7 +114,7 @@ class SlideAnimator extends React.Component<AnimatorProps, State> {
         >
           {this.state.curChild}
         </Slider>
-      </div>
+      </>
     );
   }
 }

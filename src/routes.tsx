@@ -1,18 +1,18 @@
-import { RouteComponentProps, RouteProps, Route } from 'react-router';
+import { RouteProps } from 'react-router';
 import { Home } from './pages/Home';
 import { Profile } from './pages/Profile';
 import { About } from './pages/About';
 import { Product } from './pages/Product';
 import { Subproduct } from './pages/Subproduct';
 import { ChangePassword } from './pages/ChangePassword';
+import { TransitionType } from './SlideSwitch/utils';
 
 export type RouteType = {
   path: string;
   component: RouteProps['component'];
   exact?: boolean;
-  slideChildren?: RouteType[];
-  zoomChildren?: RouteType[];
-  fadeChildren?: RouteType[];
+  transition: TransitionType;
+  children?: RouteType[];
 };
 
 export const dataRoutes: RouteType[] = [
@@ -20,13 +20,16 @@ export const dataRoutes: RouteType[] = [
     path: '/home',
     component: Home,
     exact: true,
-    slideChildren: [
+    transition: 'fade',
+    children: [
       {
         path: '/product/:productId',
         component: Product,
         exact: true,
-        slideChildren: [
+        transition: 'slide',
+        children: [
           {
+            transition: 'slide',
             path: '/subproduct/:subproductId',
             component: Subproduct,
             exact: true
@@ -38,11 +41,13 @@ export const dataRoutes: RouteType[] = [
   {
     path: '/profile',
     component: Profile,
-    zoomChildren: [
+    transition: 'fade',
+    children: [
       {
         path: '/change-password',
         component: ChangePassword,
-        exact: true
+        exact: true,
+        transition: 'zoom'
       }
     ],
     exact: true
@@ -50,6 +55,7 @@ export const dataRoutes: RouteType[] = [
   {
     path: '/about',
     component: About,
-    exact: true
+    exact: true,
+    transition: 'fade'
   }
 ];

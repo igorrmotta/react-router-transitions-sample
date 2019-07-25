@@ -1,7 +1,7 @@
 import React from 'react';
 import { SwitchProps, RouteProps, matchPath } from 'react-router';
 
-export type TransitionType = 'slide' | 'fade';
+export type TransitionType = 'slide' | 'fade' | 'zoom';
 type RP = RouteProps & { transitionName: TransitionType };
 type P = SwitchProps | RP;
 

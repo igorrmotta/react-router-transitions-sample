@@ -11,17 +11,18 @@ export type AnimatorProps = {
   children: AnimatorChildrenType;
   uniqKey: string;
   history: History;
+  onDone?: () => void;
 };
 
 const animateSwitch = (
   CustomSwitch: React.ComponentType<SwitchProps & { transitionName: string }>,
   AnimatorComponent: React.ComponentType<AnimatorProps>,
   transitionName: TransitionType
-) => (props: { children: any }) => {
+) => (props: { children: any; onDone?: () => void }) => {
   return (
     <Route
       render={({ location, history }) => (
-        <AnimatorComponent uniqKey={location.pathname} history={history}>
+        <AnimatorComponent onDone={props.onDone} uniqKey={location.pathname} history={history}>
           <CustomSwitch transitionName={transitionName} location={location}>
             {props.children}
           </CustomSwitch>
